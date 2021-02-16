@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    
+    
+        <meta name="twitter:card" content="summary"/>
+    
+
+
+
+<meta name="twitter:title" content="Recv"/>
+<meta name="twitter:description" content=""/>
+<meta name="twitter:site" content="@"/>
+
+
+
+  	<meta property="og:title" content="Recv &middot; the website title shown on the tab" />
+  	<meta property="og:site_name" content="the website title shown on the tab" />
+  	<meta property="og:url" content="https://smu160.github.io/recv/" />
+
+    
+        
+            <meta property="og:image" content="/images/cover.png"/>
+        
+    
+
+    
+    <meta property="og:description" content="" />
+  	<meta property="og:type" content="article" />
+    <meta property="article:published_time" content="2021-02-15T20:24:20-05:00" />
+
+    
+    
+
+    <title>Recv &middot; the website title shown on the tab</title>
+
+    
+    <meta name="description" content="The recv system call Background Learning how to use the sockets API was one of the most rewarding programming experiences I had, but there are a myriad of cavea" />
+    
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="https://smu160.github.io/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="https://smu160.github.io/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="https://smu160.github.io/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="https://smu160.github.io/css/nav.css" />
+
+    
+
+    
+
+    
+      
+          <link href="https://smu160.github.io/index.xml" rel="alternate" type="application/rss+xml" title="the website title shown on the tab" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.80.0" />
+
+    <link rel="canonical" href="https://smu160.github.io/recv/" />
+
+    
+      
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name":  null ,
+        "logo": "https://smu160.github.io/images/logo.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name":  null ,
+        
+        "image": {
+            "@type": "ImageObject",
+            "url": "https://smu160.github.io/images/logo.png",
+            "width": 250,
+            "height": 250
+        }, 
+        
+        "url":  null ,
+        "sameAs": [
+            
+            
+             
+             
+             
+             
+             
+            
+        ]
+    },
+    "headline": "Recv",
+    "name": "Recv",
+    "wordCount":  313 ,
+    "timeRequired": "PT2M",
+    "inLanguage": {
+      "@type": "Language",
+      "alternateName": "en"
+    },
+    "url": "https://smu160.github.io/recv/",
+    "datePublished": "2021-02-15T20:24Z",
+    "dateModified": "2021-02-15T20:24Z",
+    
+    
+    "description": "",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://smu160.github.io/recv/"
+    }
+}
+    </script>
+    
+
+
+    
+
+    
+
+    
+</head>
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            <br />
+            <li class="nav-opened" role="presentation">
+            	<a href="https://smu160.github.io/">Home</a>
+            </li>
+        
+            <br />
+            <li class="nav-opened" role="presentation">
+            	<a href="https://smu160.github.io/post">Blog</a>
+            </li>
+        
+            <br />
+            <li class="nav-opened" role="presentation">
+            	<a href="https://smu160.github.io/contact">Contact</a>
+            </li>
+        
+        
+    </ul>
+
+    
+    <a class="subscribe-button icon-feed" href="https://smu160.github.io/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav overlay clearfix">
+
+
+      
+        <a class="blog-logo" href="https://smu160.github.io/"><img src="https://smu160.github.io/images/logo.png" alt="Home" /></a>
+      
+      
+          <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+      
+    </nav>
+
+    
+
+
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post ">
+    <header class="post-header">
+      <nav class="breadcrumb">
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </nav>
+
+
+        <h1 class="post-title">Recv</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+
+
+<h1 id="the-recv-system-call">The recv system call</h1>
+<h3 id="background">Background</h3>
+<p>Learning how to use the sockets API was one of the most rewarding programming experiences I had, but there are a myriad of caveats that can snag up even seasoned developers. Let&rsquo;s take a look at one of these potential pitfalls and attempt to address it.</p>
+<h3 id="the-recv-system-call-1">The recv system call</h3>
+<p>For the sake of simplicity, we&rsquo;ll only consider the case of a <em>non-blocking</em> socket on a single-threaded server.</p>
+<p>The recv system call is as follows:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C">ssize_t <span style="color:#a6e22e">recv</span>(<span style="color:#66d9ef">int</span> socket, <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>buffer, size_t length, <span style="color:#66d9ef">int</span> flags);
+</code></pre></div><p>Moreover, the return values are documented as follows:</p>
+<pre><code>These calls return the number of bytes received, or -1 if an error occurred.
+
+For TCP sockets, the return value 0 means the peer has closed its half side of the connection.
+</code></pre><h3 id="what-not-to-do">What not to do</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#66d9ef">while</span> ((bytes_read <span style="color:#f92672">=</span> recv(client_sock, buffer, <span style="color:#66d9ef">sizeof</span>(buffer)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>)) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
+    <span style="color:#75715e">// do stuff with buffer
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>Why is this wrong? If we go back to the man page using <code>man 2 recv</code>, we&rsquo;ll find this vital snippet:</p>
+<p><code>The receive calls normally return any data available, up to the requested amount, rather than waiting for receipt of the full amount requested</code></p>
+<h3 id="the-fix">The fix</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#66d9ef">do</span> {
+    bytes_read <span style="color:#f92672">=</span> recv(client_sock, <span style="color:#f92672">&amp;</span>buffer[total_recvd], <span style="color:#66d9ef">sizeof</span>(buffer)<span style="color:#f92672">-</span>total_recvd, <span style="color:#ae81ff">0</span>);
+    <span style="color:#66d9ef">if</span> (bytes_read <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span>) {
+        <span style="color:#66d9ef">break</span>;
+    } <span style="color:#66d9ef">else</span> {
+        total_recvd <span style="color:#f92672">+=</span> bytes_read;
+    }
+}
+<span style="color:#66d9ef">while</span> (total_recvd <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">sizeof</span>(buffer));
+</code></pre></div><p>There are a few things to note here:</p>
+<ol start="0">
+<li>As long as no error occurred, and the connection wasn&rsquo;t closed, we keep a running total of the amount of bytes we expected, (i.e., <code>total_recvd</code>).</li>
+<li>We want to continue to recv data into the buffer, but we don&rsquo;t want to overwrite the data we already received, so we advance the <code>buffer</code> pointer by the amount of data we&rsquo;ve already received .</li>
+<li>The length supplied to <code>recv</code> should be advanced as a function of our buffer size and the amount of data we already received.</li>
+</ol>
+
+
+
+
+
+
+
+
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+    
+    <figure class="author-image">
+        <a class="img" href="https://smu160.github.io/" style="background-image: url(/images/logo.png)"><span class="hidden">'s Picture</span></a>
+    </figure>
+    
+
+    
+
+
+
+
+    
+<section class="share">
+  <h4>Share this page</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=Recv&nbsp;-&nbsp;the%20website%20title%20shown%20on%20the%20tab&amp;url=https%3a%2f%2fsmu160.github.io%2frecv%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fsmu160.github.io%2frecv%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2fsmu160.github.io%2frecv%2f&amp;description=Recv"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=https%3a%2f%2fsmu160.github.io%2frecv%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+
+
+
+
+
+
+  </footer>
+</article>
+
+</main>
+
+<aside class="read-next">
+  
+  
+      <a class="read-next-story prev" style="no-cover" href="https://smu160.github.io/about/">
+          <section class="post">
+              <h2>About</h2>
+          </section>
+      </a>
+  
+</aside>
+
+
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">the website title shown on the tab</a> © Saveliy Yusufov 2021</section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="https://smu160.github.io/js/jquery.js"></script>
+    <script type="text/javascript" src="https://smu160.github.io/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://smu160.github.io/js/index.js"></script>
+    
+</body>
+</html>
+

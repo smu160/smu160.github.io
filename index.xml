@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>the website title shown on the tab</title>
+    <link>https://smu160.github.io/</link>
+    <description>Recent content on the website title shown on the tab</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© Saveliy Yusufov 2021</copyright><atom:link href="https://smu160.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Recv</title>
+      <link>https://smu160.github.io/recv/</link>
+      <pubDate>Mon, 15 Feb 2021 20:24:20 -0500</pubDate>
+      
+      <guid>https://smu160.github.io/recv/</guid>
+      <description>The recv system call Background Learning how to use the sockets API was one of the most rewarding programming experiences I had, but there are a myriad of caveats that can snag up even seasoned developers. Let&amp;rsquo;s take a look at one of these potential pitfalls and attempt to address it.
+The recv system call For the sake of simplicity, we&amp;rsquo;ll only consider the case of a non-blocking socket on a single-threaded server.</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://smu160.github.io/about/</link>
+      <pubDate>Mon, 15 Feb 2021 20:22:32 -0500</pubDate>
+      
+      <guid>https://smu160.github.io/about/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
