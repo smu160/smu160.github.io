@@ -5,7 +5,7 @@ paginate: 2
 theme: PaperMod
 
 enableRobotsTXT: true
-buildDrafts: false
+buildDrafts:
 buildFuture: false
 buildExpired: false
 
@@ -85,7 +85,7 @@ params:
         url: "tags"
 
   homeInfoParams:
-    Title: "Unconventional Code Mastery: Performance Insights & Optimizations"
+    Title: "An Optimization Odyssey"
     Content: |
       Hey, I’m Saveliy Yusufov. I first started this blog shortly after I finished college to 
       document the fascinating ideas I encountered as a new software engineer. Although I paused 
