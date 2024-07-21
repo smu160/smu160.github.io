@@ -96,7 +96,8 @@ params:
       >
 
       If you’re curious about me, I took a non-traditional path after high school. Shortly after 
-      finishing high school, I went into the army, where I served as an Army Ranger. I never desired 
+      finishing high school, I went into the army, where I served as an 
+      [Army Ranger](https://en.wikipedia.org/wiki/75th_Ranger_Regiment). I never desired 
       to go to college, and I always thought I’d go into the medical field (at the behest of my family). 
       In a twist of fate, I discovered programming. That motivated me to go to college to study computer
       science once I transitioned out of the service. I pursued a CS & Math combined major to prove to
@@ -107,9 +108,7 @@ params:
       possible. Initially, this obsession took the form of fixing low-hanging fruit in code (e.g., 
       replacing sequential lookups in a large array with a hashmap). Once I discovered the joys of concurrency
       and parallelism, I became obsessed with leveraging them to improve performance as well. My latest 
-      obsession has been SIMD. Namely, utilizing SIMD to achieve significant performance improvements. In 
-      addition to SIMD, I enjoy venturing into the rabbit holes of Godbolt to see how I can reduce the number
-      of cycles my code takes.
+      obsession has been SIMD. Namely, utilizing SIMD to achieve significant performance improvements.
 
       >
 
@@ -119,7 +118,7 @@ params:
     - name: "github"
       url: "https://github.com/smu160"
     - name: "linkedin"
-      url: "www.linkedin.com/in/saveliy-yusufov-smy"
+      url: "https://linkedin.com/in/saveliy-yusufov-smy"
 
   cover:
     hidden: true
