@@ -1,7 +1,7 @@
 baseURL: "https://smu160.github.io/"
 languageCode: "en-us"
-title: "Unconventional Code Mastery: Performance Insights & Optimizations"
-paginate: 5
+title: "An Optimization Odyssey"
+paginate: 2
 theme: PaperMod
 
 enableRobotsTXT: true
@@ -9,21 +9,37 @@ buildDrafts: false
 buildFuture: false
 buildExpired: false
 
-
 minify:
   disableXML: true
   minifyOutput: true
 
 params:
-  env: production # to enable google analytics, opengraph, twitter-cards and schema.
-  title: "Unconventional Code Mastery: Performance Insights & Optimizations"
-  description: "Performance Insights & Optimizations"
-  keywords: [Blog, Portfolio, PaperMod]
+  env: "production" # to enable google analytics, opengraph, twitter-cards and schema.
+  title: "An Optimization Odyssey"
+  description: "'An Optimization Odyssey' is a blog by Saveliy Yusufov, exploring high-performance software and algorithm optimization. With a focus on Rust, SIMD, and parallel computing, Saveliy shares his journey to push software limits, offering insights and solutions to complex performance challenges. Note: All opinions presented are my own and not my employer’s."
+  keywords:
+    [
+      High-performance software,
+      Algorithm optimization,
+      Rust programming,
+      HPC,
+      high-performance computing,
+      SIMD,
+      Parallel computing,
+      Code performance,
+      Software engineering,
+      Concurrency,
+      Rust language,
+      Programming insights,
+      Software optimization,
+      Performance analysis,
+      Advanced coding techniques,
+      Efficient algorithms,
+      Computing performance,
+    ]
   author: "Saveliy Yusufov"
-  # author: ["Me", "You"] # multiple authors
-  # images: ["<link or path of image for opengraph, twitter-cards>"]
   DateFormat: "2 January 2006"
-  defaultTheme: auto # dark, light
+  defaultTheme: "auto" # dark, light
   disableThemeToggle: false
 
   ShowReadingTime: true
@@ -43,8 +59,6 @@ params:
   tocopen: false
 
   assets:
-    # disableHLJS: true # to disable highlight.js
-    # disableFingerprinting: true
     favicon: "<link / abs url>"
     favicon16x16: "<link / abs url>"
     favicon32x32: "<link / abs url>"
@@ -53,55 +67,65 @@ params:
 
   label:
     text: "Home"
-    icon: /apple-touch-icon.png
+    icon: "/apple-touch-icon.png"
     iconHeight: 35
 
-  # profile-mode
   profileMode:
-    enabled: false # needs to be explicitly set
-    title: ExampleSite
+    enabled: false
+    title: "ExampleSite"
     subtitle: "This is subtitle"
     imageUrl: "<img location>"
     imageWidth: 120
     imageHeight: 120
-    imageTitle: my image
+    imageTitle: "my image"
     buttons:
-      - name: Posts
-        url: posts
-      - name: Tags
-        url: tags
+      - name: "Posts"
+        url: "posts"
+      - name: "Tags"
+        url: "tags"
 
-  # home-info mode
   homeInfoParams:
     Title: "Unconventional Code Mastery: Performance Insights & Optimizations"
-    Content: "> Hey, I'm Saveliy Yusufov. I first started this blog shortly after I finished college as a means of 
-    keeping track of the neat ideas I learned throughout my time in college, and as a new software engineer. For a 
-    myriad of reasons, I didn't continue to blog; however, I've been learning so many neat things over the past year, 
-    that I felt I'd be remiss if I didn't start jotting down all these new ideas and thoughts.
-   
-   
-    > If you're curious about me, I took a non-traditional path after high school, but I still ended up in college.
-    Although I always thought I'd go into medicine (at the behest of my family), I somehow ended up majoring in 
-    computer science and math. 
+    Content: |
+      Hey, I’m Saveliy Yusufov. I first started this blog shortly after I finished college to 
+      document the fascinating ideas I encountered as a new software engineer. Although I paused 
+      for a while, recent learning experiences have reignited my passion for sharing these insights. 
+      Sometimes I find neat ways to optimize code using a bunch of different resources to help me, 
+      and this blog now serves as a way to document the solutions and my experiences.
 
+      >
 
-    > Shortly after I started programming, I became consumed by the idea of making my code as performant as possible.
-    In the beginning, this obsession took the form of fixing low hanging fruit in code (e.g., replace sequential lookups in a 
-    large array with a hashmap. Then, I began to learn about concurrency and parallelism. Nowadays, I've begun to
-    dive deeper into performance analysis and optimization. Sometimes I find neat ways to optimize code using a bunch
-    of different resources to help me, and this blog will serve as a way to write up my experiences."
+      If you’re curious about me, I took a non-traditional path after high school. Shortly after 
+      finishing high school, I went into the army, where I served as an Army Ranger. I never desired 
+      to go to college, and I always thought I’d go into the medical field (at the behest of my family). 
+      In a twist of fate, I discovered programming. That motivated me to go to college to study computer
+      science once I transitioned out of the service. I pursued a CS & Math combined major to prove to
+      myself that I'm not just bad at math (yes, I loathed math in high school and even failed multiple 
+      math classes).
+
+      Shortly after I started programming, I became consumed by the idea of making my code as performant as 
+      possible. Initially, this obsession took the form of fixing low-hanging fruit in code (e.g., 
+      replacing sequential lookups in a large array with a hashmap). Once I discovered the joys of concurrency
+      and parallelism, I became obsessed with leveraging them to improve performance as well. My latest 
+      obsession has been SIMD. Namely, utilizing SIMD to achieve significant performance improvements. In 
+      addition to SIMD, I enjoy venturing into the rabbit holes of Godbolt to see how I can reduce the number
+      of cycles my code takes.
+
+      >
+
+      **Note: All opinions presented in this blog are my own and not my employer's.**
 
   socialIcons:
-    - name: github
+    - name: "github"
       url: "https://github.com/smu160"
+    - name: "linkedin"
+      url: "www.linkedin.com/in/saveliy-yusufov-smy"
 
   cover:
-    hidden: true # hide everywhere but not in structured data
-    hiddenInList: true # hide on list pages and home
-    hiddenInSingle: true # hide on single page
+    hidden: true
+    hiddenInList: true
+    hiddenInSingle: true
 
-  # for search
-  # https://fusejs.io/api/options.html
   fuseOpts:
     isCaseSensitive: false
     shouldSort: true
@@ -110,27 +134,15 @@ params:
     threshold: 0.4
     minMatchCharLength: 0
     keys: ["title", "permalink", "summary", "content"]
+
 menu:
   main:
-    - identifier: posts
-      name: posts
-      url: /posts/
+    - identifier: "posts"
+      name: "posts"
+      url: "/posts/"
       weight: 10
-#    - identifier: tags
-#      name: tags
-#      url: /tags/
-#      weight: 20
-    - identifier: Spinoza
-      name: Spinoza
-      url: https://qustate.github.io/spinoza/
-      weight: 30
-# Read: https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#using-hugos-syntax-highlighter-chroma
+
 pygmentsUseClasses: true
 markup:
   highlight:
     noClasses: false
-    # anchorLineNos: true
-    # codeFences: true
-    # guessSyntax: true
-    # lineNos: true
-    # style: monokai
