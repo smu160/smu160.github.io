@@ -5,7 +5,7 @@ draft = false
 summary = "A beautiful proof and elegant proof covered in Abstract Algebra."
 author = "Saveliy Yusufov"
 math = "katex"
-disableShare = true
+disableShare = false
 +++
 
 Group Homomorphism Maps Inverses to Inverses
