@@ -1,7 +1,7 @@
 baseURL: "https://smu160.github.io/"
 languageCode: "en-us"
 title: "An Optimization Odyssey"
-paginate: 2
+paginate: 5
 theme: PaperMod
 
 enableRobotsTXT: true
@@ -9,12 +9,19 @@ buildDrafts:
 buildFuture: false
 buildExpired: false
 
+sitemap:  # Added Sitemap Configuration
+  changefreq: "daily"
+  priority: 0.5
+  filename: "sitemap.xml"
+
 minify:
   disableXML: true
   minifyOutput: true
 
 params:
   env: production # to enable google analytics, opengraph, twitter-cards and schema.
+  opengraph: true  # Added for OpenGraph support
+  twitterCards: true  # Added for Twitter Cards support
   title: "An Optimization Odyssey"
   description: "'An Optimization Odyssey' is a blog by Saveliy Yusufov, exploring high-performance software and algorithm optimization. With a focus on Rust, SIMD, and parallel computing, Saveliy shares his journey to push software limits, offering insights and solutions to complex performance challenges. Note: All opinions presented are my own and not my employer’s."
   keywords:

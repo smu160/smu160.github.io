@@ -3,7 +3,8 @@ title = 'Python Truthiness and Equivalence Classes: A Mathematical Perspective'
 date = 2023-11-30T09:33:02-05:00
 draft = false
 math = "katex"
-disableShare = true
+disableShare = false
+tags = ["Python", "Programming", "Truthiness", "Equivalence Classes", "Python Basics", "Python Tips", "Software Development", "Code Optimization", "Programming Concepts", "Math"]
 +++
 
 #### Introduction

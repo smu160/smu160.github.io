@@ -5,7 +5,8 @@ draft = false
 summary = "Intro to the `recv` system call, and a common mistake beginners make when employing `recv`."
 author = "Saveliy Yusufov"
 math = "katex"
-disableShare = true
+disableShare = false
+tags = ["C Programming", "recv System Call", "Socket Communication", "TCP/IP Sockets", "Socket Programming Best Practices", "Sockets", "Network Programming in C", "System Calls"]
 +++
 
 Recv
