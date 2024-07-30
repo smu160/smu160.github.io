@@ -14,7 +14,7 @@ minify:
   minifyOutput: true
 
 params:
-  env: "production" # to enable google analytics, opengraph, twitter-cards and schema.
+  env: production # to enable google analytics, opengraph, twitter-cards and schema.
   title: "An Optimization Odyssey"
   description: "'An Optimization Odyssey' is a blog by Saveliy Yusufov, exploring high-performance software and algorithm optimization. With a focus on Rust, SIMD, and parallel computing, Saveliy shares his journey to push software limits, offering insights and solutions to complex performance challenges. Note: All opinions presented are my own and not my employer’s."
   keywords:
@@ -55,7 +55,7 @@ params:
   comments: false
   hidemeta: false
   hideSummary: false
-  showtoc: false
+  showtoc: true
   tocopen: false
 
   assets:
