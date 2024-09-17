@@ -1,19 +1,23 @@
 +++
-title = 'Perf Resources'
+title = 'Rust Performance Resources'
+slug = 'rust-performance-resources'
 date = 2024-09-14T15:32:55-04:00
+lastmod = 2024-09-17T10:00:00-04:00
 draft = false
-description = "A comprehensive list of resources for optimizing code with a bit of focus on Rust."
+description = "A comprehensive list of resources for optimizing code with a slight focus on Rust."
 tags = ["rust", "performance", "optimization", "resources", "guide", "performance-analysis", "tuning", "SIMD", "HFT", "HPC"]
+categories = ["Programming", "Performance Optimization"]
+author = "Saveliy Yusufov"
 +++
+
+A curated list of resources for optimizing code, with a focus on Rust.
 
 ## General
 
 ### Rust Specific
 
 * [The Rust Performance Book](https://nnethercote.github.io/perf-book)
-
 (great starting point for beginners and those new to Rust)
-
 * [How to avoid bounds checks in Rust (without unsafe!)](https://shnatsel.medium.com/how-to-avoid-bounds-checks-in-rust-without-unsafe-f65e618b4c1e)
 
 ### Performance Cheat Sheets
@@ -28,13 +32,12 @@ tags = ["rust", "performance", "optimization", "resources", "guide", "performanc
 
 ### Memory
 
-[Array of Structs vs. Struct of Arrays](https://github.com/tim-harding/soa-rs?tab=readme-ov-file#what-is-soa)
-
-[Data alignment for speed: myth or reality?](https://lemire.me/blog/2012/05/31/data-alignment-for-speed-myth-or-reality/)
+* [Array of Structs vs. Struct of Arrays](https://github.com/tim-harding/soa-rs?tab=readme-ov-file#what-is-soa)
+* [Data alignment for speed: myth or reality?](https://lemire.me/blog/2012/05/31/data-alignment-for-speed-myth-or-reality/)
 
 ### Floats
 
-1. [Taming Float Sums](https://orlp.net/blog/taming-float-sums/)
+* [Taming Float Sums](https://orlp.net/blog/taming-float-sums/)
 
 ## Tools and Libraries
 
@@ -68,10 +71,16 @@ tags = ["rust", "performance", "optimization", "resources", "guide", "performanc
 
 ### HFT
 
-* [When a Microsecond Is an Eternity: High Performance Trading Systems in C++”](https://www.youtube.com/watch?v=NH1Tta7purM)
+* [When a Microsecond Is an Eternity: High Performance Trading Systems in C++](https://www.youtube.com/watch?v=NH1Tta7purM)
 
 ### FFT
 
 * [Construction of a High-Performance FFT](https://edp.org/work/Construction.pdf)
 * [Mixed Data Layout Kernels for Vectorized Complex Arithmetic](https://spiral.ece.cmu.edu/pub-spiral/pubfile/hpec_2017_tp_288.pdf)
 * [Notes on FFTs: for implementers](https://fgiesen.wordpress.com/2023/03/19/notes-on-ffts-for-implementers/)
+
+---
+
+Last updated: {{< lastmod >}}
+
+Found this helpful? Have suggestions? Feel free to [reach out on GitHub](https://github.com/smu160).
