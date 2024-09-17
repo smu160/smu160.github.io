@@ -81,6 +81,4 @@ A curated list of resources for optimizing code, with a focus on Rust.
 
 ---
 
-Last updated: {{< lastmod >}}
-
 Found this helpful? Have suggestions? Feel free to [reach out on GitHub](https://github.com/smu160).
