@@ -1,138 +1,130 @@
 +++
 title = "From FFTs to Quantum Simulations: The Butterfly Connection"
 date = 2024-07-24T20:02:58-04:00
-draft = true
+draft = false
 math = "katex"
 disableShare = false
 +++
 
 ### Introduction
 
-At first glance, Fast Fourier Transforms (FFT) and quantum state simulations might seem unrelated; however, they share a fascinating connection that has a beautiful visualization.
+For a while I have been working on a quantum state simulator, Spinoza. During the implementation
+and performance tuning of the simulator, I encountered a memory access pattern that comes up often
+in the context of DSP. Namely, the [butterfly, data-flow, diagram](https://en.wikipedia.org/wiki/Butterfly_diagram).
 
-FFTs are widely used in digital signal processing to convert signals from the time domain to the frequency domain. Similarly, quantum state simulations, especially those involving the Quantum Fourier Transform (QFT), use similar mathematical principles to manipulate quantum states.
+Just for context, I did not happen to cover the [FFT](https://en.wikipedia.org/wiki/Fast_Fourier_transform)
+when I was in college. Some professors choose to cover that portion of CLRS
+in their algorithms classes, and some don't. I was always intimidated and worried about the
+amount of time it would take to even learn it.
 
-For software engineers familiar with implementing FFT, understanding this connection can provide new perspectives and offer a different angle to approach and comprehend quantum computing concepts. If you know how to implement the basic FFT, you already have a significant foundation for understanding quantum computing, particularly for simulating single qubit gates on a classical machine.
+It turns out that a visually stunning diagram that is almost easily
+reproducible (at least from my unremarkable memory) is all to understand the
+underlying mechanics of applying gates to qubits and applying the FFT to some
+sequence of data.
 
-### FFT and the Butterfly Operation
+Of course, the butterfly diagram is quite often used in
+[books](https://www.amazon.com/Fast-Fourier-Transform-Introduction-Application/dp/013307496X)
+that cover the FFT; however, there are very few resources that tie that same
+diagram to quantum computing (or at least simulating a quantum computer on a
+classical machine).
 
-The FFT algorithm is an efficient way to compute the Discrete Fourier Transform (DFT). The DFT converts a sequence of complex numbers in the time domain into another sequence of complex numbers in the frequency domain. The Cooley-Tukey FFT algorithm, the most commonly used FFT, reduces the computational complexity from $O(N^2)$ to $O(N \log N)$ by recursively breaking down the DFT into smaller DFTs.
+You should note I'm no quantum computing or DSP expert. I'm sure there a lot of
+things that are hand wavy in this post.
 
-A key component of the FFT is the butterfly operation. This operation combines pairs of elements in a manner that resembles the shape of a butterfly when drawn out in a flow graph.
+So, let's dive in and see how the butterfly comes up in the world of DSP and in
+quantum computing.
 
-#### Detailed Breakdown of the Butterfly Operation
+### Simulating a Quantum Computer on a Classical machine
 
-The butterfly operation[^1] involves the following steps :
+Every quantum state of $n$ qubits has to be represented by
+$2^{n}$ amplitudes. What are amplitudes? Complex numbers. Yes,
+that's it.
 
-1. **Splitting**: Divide the data into smaller chunks.
-2. **Twiddle Factors**: Multiply the data by complex exponential values known as twiddle factors.
-3. **Combining**: Add and subtract the resulting values to form new pairs.
+What's a complex number? $z = a + ib$ such that $a \in \mathbb{R}, b \in \mathbb{R}$ and $i = \sqrt{-1}$
 
-Here's a simple example using two complex numbers \(X\) and \(Y\):
+But let's just stick to the code perspective more. So, here's our amplitude/complex number in code.
 
-1. Compute the sum: \(X + Y\)
-2. Compute the difference multiplied by a twiddle factor \(W\): \((X - Y) \cdot W\)
-
-These operations are performed recursively across the entire dataset.
-
-#### FFT Butterfly Diagram
-
-Here's how a simple FFT butterfly diagram looks:
-
-![fft](../../fft_butterfly.pdf)
-
-### Quantum State Simulations
-
-Quantum computing operates on qubits, which are quantum analogs of classical bits. Unlike classical bits, qubits can exist in a superposition of states, represented by complex probability amplitudes. Quantum gates manipulate these states using unitary matrices.
-
-#### Applying a Quantum Gate
-
-Consider a simple quantum gate represented by a $2 \times2$ matrix:
-
-\[ A = \begin{bmatrix}
-u_{00} & u_{01} \\
-u_{10} & u_{11}
-\end{bmatrix} \]
-
-When this gate is applied to a pair of qubits, the operation can be visualized as:
-
-1. **Load**: Grab a pair of datapoints and insert them into a vector:
-    $$v = \begin{bmatrix} z_{0} \\ z_{1} \end{bmatrix}$$
-2. **Applying the Gate**: Multiply the pair by the unitary matrix.
-
-\[ Av = 
-\begin{bmatrix}
-a_{00} & a_{01} \\
-a_{10} & a_{11}
-\end{bmatrix} 
-\begin{bmatrix} z_{0} \\ z_{1} \end{bmatrix}
-= \begin{bmatrix} z'_{0} \\ z'_{1} \end{bmatrix}
-\]
-
-3. **Store**: Update the values at index $0$ and $1$:
-
-```python
-state[0] = c_0
-state[1] = c_1
+```rust
+# [derive(Debug)]
+struct Amplitude {
+    real: f64,
+    imaginary: f64,
+}
 ```
 
+It's basically a 2D point on a plane.
 
-This operation is strikingly similar to the FFT butterfly operation.
+So let's consider a quantum state composed of $3$ qubits.
+That means we need $2^{3} = 8$ amplitudes.
 
-### Drawing the Connection
+```
+[z0, z1, z2, z3, z4, z5, z6, z7]
+```
 
-To illustrate how FFT butterfly operations and quantum state simulations are similar, let's compare their core operations.
+That's all it is. Just an array of 8 complex numbers. The
+data structure is simple. The computations we apply to it are where things
+get a bit hairier.
 
-#### FFT Butterfly Operation
+In the quantum world, operations are applied using gates.
+Specifically, a single-qubit gate is a $2 \times 2$ matrix.
 
-1. **Input**: Complex numbers \(a_0, a_1, a_2, a_3\)
-2. **Operation**:
-   - Compute \(b_0 = a_0 + a_2\)
-   - Compute \(b_1 = (a_1 + a_3) \cdot W\)
-   - Compute \(b_2 = a_0 - a_2\)
-   - Compute \(b_3 = (a_1 - a_3) \cdot W\)
-3. **Output**: Transformed complex numbers \(b_0, b_1, b_2, b_3\)
+Sweet. But how do we apply a $2 \times 2$ matrix to a quantum state composed of
+8 amplitudes? Well you could build up a gigantic $2^{n} \times 2^{n}$ matrix
+(just imagine how big this matrix needs to be if you wanted to do something
+with 10 qubits). Clearly a quantum computer has much more power (for certain problems)
+than a classical machine. But it doesn't have to be this bad from the space complexity
+perspective.
 
-#### Quantum Gate Operation
+You may already know that a $2\times 2$ matrix is usually applied to a $2 \times 1$
+vector. This is where the butterfly comes in.
 
-1. **Input**: Qubit states \(\psi_0, \psi_1\)
-2. **Operation**:
-   - Apply unitary matrix \(U\)
-   - Compute new states:
-     - \(\psi_0' = u_{00} \psi_0 + u_{01} \psi_1\)
-     - \(\psi_1' = u_{10} \psi_0 + u_{11} \psi_1\)
-3. **Output**: Transformed qubit states \(\psi_0', \psi_1'\)
+We're considering the case of $n = 3$ qubits. So let's apply a gate to qubit $0$.
+
+In the case of target qubit 0,
+We need to take every contiguous pair in our state, put it into the $2 \times 1$ vector,
+and apply the matrix to it. Specifically, the pairs are:
+
+```
+z0, z1
+z2, z3
+z4, z5,
+z6, z7
+```
+
+Target qubit 1?
+
+```
+z0, z2
+z1, z3
+z4, z6,
+z5, z7
+```
+
+Target qubit 2?
+
+```
+z0, z4
+z1, z5
+z2, z6,
+z3, z7
+```
+
+So let's put it all together now:
+
+![quantum_butterfly](/images/quantum_butterfly.png)
+
+Note how the column labeled qubit 0 shows us retrieving the pair
+`(z2, z3)`, writing it to the $2 \times 1$ vector. Then we apply
+the gate (i.e., the matrix) to that vector. The output is another
+$2 \times 1$ vector whose values need to be overwrite `z2` and `z3`
+in the array.
+
+As it turns out, the overwhelming majority of high performance quantum state simulators
+all use this data flow pattern as well.
 
 ### Computational Complexity
 
 The IQFT (Forward FFT) is $O(n^2)$, where $n$ is the number of gates.
 
 On the other hand, the FFT is $O(N \log N)$. Note that
-$N = 2^n$. Thus, the 
-
-### Practical Implications for Software Engineers
-
-For software engineers familiar with FFT implementations, recognizing the similarity to quantum gate simulations can be enlightening. Here are some practical implications:
-
-1. **Leveraging Existing Knowledge**:
-   - If you know how to implement the basic FFT, you already have a significant foundation for understanding quantum computing, particularly for simulating single qubit gates on a classical machine. Understanding the butterfly operation in FFT provides a solid foundation for grasping the principles of quantum state manipulation. The recursive structure and parallelism in FFT can be directly applied to quantum algorithms.
-
-2. **Optimization Techniques**:
-   - Techniques used to optimize FFT implementations, such as efficient memory access patterns and SIMD (Single Instruction, Multiple Data) instructions, can also be beneficial when simulating quantum gates. This can lead to more efficient quantum simulators on classical hardware.
-
-3. **Cross-Disciplinary Innovation**:
-   - By drawing parallels between FFT and quantum simulations, engineers can explore new algorithms and optimization strategies that benefit both fields. This cross-disciplinary approach can lead to breakthroughs in digital signal processing and quantum computing.
-
-### Conclusion
-
-The FFT butterfly operation and quantum state simulations share a deep connection through their use of complex arithmetic, recursive structures, and parallelism. Both leverage the fundamental principles of linear algebra to transform data efficiently.
-
-By understanding these similarities, software engineers can draw valuable insights and potentially innovate new techniques in both digital signal processing and quantum simulations. This cross-disciplinary perspective enriches our approach to problem-solving and highlights the underlying unity in seemingly disparate fields.
-
-### References
-
-- Cooley, J. W., & Tukey, J. W. (1965). An algorithm for the machine calculation of complex Fourier series. Mathematics of Computation, 19(90), 297-301.
-- Nielsen, M. A., & Chuang, I. L. (2010). Quantum Computation and Quantum Information: 10th Anniversary Edition. Cambridge University Press.
-
-[^1]: For the sake of simplicity, we only consider the Decimation-in-Time (DIT) FFT here. When it comes to the Decimation-in-Frequency FFT, The first stage of the FFT is equivalent
-to applying a single qubit gate to qubit $n-1$. Similarly, the 1st stage is equivalent to applying a gate to qubit $n-2$, and so on.
+$N = 2^n$. Thus, the
