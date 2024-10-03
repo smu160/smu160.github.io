@@ -52,7 +52,10 @@ struct Amplitude {
 }
 ```
 
-It's basically a 2D point on a plane.
+It's basically a 2D point on a plane. For here on out, we'll use the
+[`Complex64`](https://docs.rs/num-complex/0.4.6/num_complex/type.Complex64.html)
+type from the `num_complex` crate for convenience (all the arithmetic
+operations for complex nums are already implemented by this crate).
 
 So let's consider a quantum state composed of $3$ qubits.
 That means we need $2^{3} = 8$ amplitudes.
@@ -119,12 +122,27 @@ the gate (i.e., the matrix) to that vector. The output is another
 $2 \times 1$ vector whose values need to be overwrite `z2` and `z3`
 in the array.
 
+Now let's see tie this back to quantum computing simulators. We'll use IBM's
+[Qiskit SDK](https://docs.quantum.ibm.com/guides/circuit-library) to create
+a super simple quantum circuit that applies the hadamard gate to qubits $0, 1, 2$.  
+
+```python
+from qiskit import QuantumCircuit
+ 
+num_qubits = 3
+qc = QuantumCircuit(num_qubits)
+
+for qubit in range(num_qubits):
+    qc.h(qubit)
+```
+
+Qiskit provides a convenient way to visualize the quantum circuit which we use to visualize
+this below.
+![qiskit_circuit_diagram](/images/qc_3q_hadamard.png)
+
+Finally, let's tie this back to our butterfly diagram.
+
+![hadamard quantum butterfly](/images/hadamard_quantum_butterfly.png)
+
 As it turns out, the overwhelming majority of high performance quantum state simulators
 all use this data flow pattern as well.
-
-### Computational Complexity
-
-The IQFT (Forward FFT) is $O(n^2)$, where $n$ is the number of gates.
-
-On the other hand, the FFT is $O(N \log N)$. Note that
-$N = 2^n$. Thus, the
