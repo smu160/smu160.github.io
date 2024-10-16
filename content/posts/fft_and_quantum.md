@@ -18,12 +18,6 @@ implementation of a quantum state simulator (i.e., how we access memory to
 apply gates to respective qubits), we are also able to understand and implement
 the Fast Fourier Transform (FFT).
 
-Just for context, I did not happen to cover the
-[FFT](https://en.wikipedia.org/wiki/Fast_Fourier_transform) when I was in
-college. Some professors choose to cover that portion of CLRS in their
-algorithms classes, and some don't. I was always intimidated and worried about
-the amount of time it would take to even learn it.
-
 It turns out that a visually stunning diagram that is almost easily
 reproducible (at least from my unremarkable memory) is all to understand the
 underlying mechanics of applying gates to qubits and applying the FFT to some
