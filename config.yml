@@ -1,7 +1,6 @@
 baseURL: "https://smu160.github.io/"
 languageCode: "en-us"
 title: "An Optimization Odyssey"
-paginate: 5
 theme: PaperMod
 
 enableRobotsTXT: true
@@ -9,7 +8,7 @@ buildDrafts:
 buildFuture: false
 buildExpired: false
 
-sitemap:  # Added Sitemap Configuration
+sitemap: # Added Sitemap Configuration
   changefreq: "daily"
   priority: 0.5
   filename: "sitemap.xml"
@@ -20,15 +19,14 @@ minify:
 
 params:
   env: production # to enable google analytics, opengraph, twitter-cards and schema.
-  opengraph: true  # Added for OpenGraph support
-  twitterCards: true  # Added for Twitter Cards support
+  opengraph: true # Added for OpenGraph support
+  twitterCards: true # Added for Twitter Cards support
   title: "An Optimization Odyssey"
   description: "'An Optimization Odyssey' is a blog by Saveliy Yusufov, exploring high-performance software and algorithm optimization. With a focus on Rust, SIMD, and parallel computing, Saveliy shares his journey to push software limits, offering insights and solutions to complex performance challenges. Note: All opinions presented are my own and not my employer’s."
   keywords:
     [
       High-performance software,
-      Algorithm optimization,
-      Rust programming,
+      Rust,
       HPC,
       high-performance computing,
       SIMD,
@@ -40,14 +38,18 @@ params:
       Programming insights,
       Software optimization,
       Performance analysis,
-      Advanced coding techniques,
-      Efficient algorithms,
-      Computing performance,
     ]
   author: "Saveliy Yusufov"
   DateFormat: "2 January 2006"
   defaultTheme: "auto" # dark, light
   disableThemeToggle: false
+
+  social:
+    github: https://github.com/smu160"
+    linkedin: https://linkedin.com/in/saveliy-yusufov-smy"
+
+  pagination:
+    pagerSize: 5
 
   ShowReadingTime: true
   ShowShareButtons: true
@@ -120,12 +122,6 @@ params:
       >
 
       **Note: All opinions presented in this blog are my own and not my employer's.**
-
-  socialIcons:
-    - name: "github"
-      url: "https://github.com/smu160"
-    - name: "linkedin"
-      url: "https://linkedin.com/in/saveliy-yusufov-smy"
 
   cover:
     hidden: true
