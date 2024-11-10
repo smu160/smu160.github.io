@@ -20,22 +20,11 @@ comes up often in the context of Digital Signals Processing (DSP). Namely, the
 [butterfly, data-flow,
 diagram](https://en.wikipedia.org/wiki/Butterfly_diagram).
 
-Yep, that's right. I ran into the butterfly diagram while implementating a
-quantum state simulator.
-
 [![YouTube
 Thumbnail](https://img.youtube.com/vi/h7apO7q16V0/hqdefault.jpg)](https://www.youtube.com/watch?v=h7apO7q16V0)
 
 In this video by [Reducible](https://www.youtube.com/@Reducible), we see the
 butterfly diagram. Of course, this video is about the FFT so that makes sense.
-
-[![YouTube
-Thumbnail](https://img.youtube.com/vi/nmgFG7PUHfo/hqdefault.jpg)](https://www.youtube.com/watch?v=nmgFG7PUHfo)
-
-Here's another great video about the FFT by
-[Veritasium](https://www.youtube.com/@veritasium). Note how the stem of the
-mushroom cloud has that familiar butterfly pattern. Namely, a rotated
-butterfly diagram.
 
 We'll now turn to understanding the implementation of quantum state simulators
 as well as the FFT through the use of this diagram. Just as one would draw out
