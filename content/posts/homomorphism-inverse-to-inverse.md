@@ -2,7 +2,8 @@
 title = 'Homomorphism Inverse to Inverse'
 date = 2021-01-13
 draft = false
-summary = "A beautiful proof and elegant proof covered in Abstract Algebra."
+summary = "An elegant proof from Abstract Algebra showing that group homomorphisms preserve inverses."
+description = "A proof that group homomorphisms map identity to identity and inverses to inverses, fundamental results in abstract algebra."
 author = "Saveliy Yusufov"
 math = "katex"
 disableShare = false

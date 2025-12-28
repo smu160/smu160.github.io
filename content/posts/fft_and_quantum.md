@@ -1,9 +1,10 @@
-+++ 
-title = "From FFTs to Quantum Simulations: The Butterfly Connection" 
-date = 2024-07-24T20:02:58-04:00 
-draft = false 
-math = "katex" 
-disableShare = false 
++++
+title = "From FFTs to Quantum Simulations: The Butterfly Connection"
+date = 2024-07-24T20:02:58-04:00
+draft = false
+math = "katex"
+disableShare = false
+summary = "Exploring the connection between the FFT butterfly diagram and quantum state simulation, with Rust implementations for both."
 +++
 
 ### Introduction
@@ -32,13 +33,13 @@ a binary search tree when reasoning about it, the butterfly diagram gives you
 almost everything you need to derive an implementation of the FFT or a quantum
 state simulator.
 
-Note I'm no quantum computing or DSP expert. I'm sure there a lot of
+Note I'm no quantum computing or DSP expert. I'm sure there are a lot of
 things that are hand wavy in this post.
 
 ### Simulating a Quantum Computer on a Classical machine
 
 Some quantum computing researchers make extensive use of quantum computer
-simulators. Their code runs quantum algorithms on relaitvely tiny amounts of
+simulators. Their code runs quantum algorithms on relatively tiny amounts of
 qubits, which are simulated using a **state vector**.
 
 > (Footnote) Of course, the simulators themselves are written in a way such that
@@ -200,20 +201,17 @@ side of the chunk, or 0 side and 1 side.
 The second row corresponds to the memory access patterns required to apply a
 single-qubit gate to target qubit $1$. Note how each chunk is composed of $4$
 amplitudes, and the chunk can be bisected at the midpoint to give us two 0-side
-amplitudes and two 1-side amplitudes. corresponds to being on the left/right
-side of the chunk, or 0 side and 1 side.
+amplitudes and two 1-side amplitudes.
 
 The third row corresponds to the memory access patterns required to apply a
 single-qubit gate to target qubit $2$. Note how each chunk is composed of $8$
 amplitudes, and the chunk can be bisected at the midpoint to give us four
-0-side amplitudes and four 1-side amplitudes. corresponds to being on the
-left/right side of the chunk, or 0 side and 1 side.
+0-side amplitudes and four 1-side amplitudes.
 
 The fourth row corresponds to the memory access patterns required to apply a
 single-qubit gate to target qubit $3$. Note how each chunk is composed of $16$
 amplitudes, and the chunk can be bisected at the midpoint to give us eight
-0-side amplitudes and eight 1-side amplitudes. corresponds to being on the
-left/right side of the chunk, or 0 side and 1 side.
+0-side amplitudes and eight 1-side amplitudes.
 
 So given a state composed of $n$ qubits, we have $2^{n} = N$ complex nums. For
 a given qubit (i.e., 0, 1, 2, 3), we have a *stride* of $2^{t}$, and the size
@@ -222,15 +220,15 @@ of each chunk at a given stride is $2 \cdot 2^{t} = 2^{t+1}$.
 ```rust
 pub fn apply_gate(state: &mut QuantumState, gate: [[f64; 2]; 2], target_qubit: usize) {
   let stride = 1 << target_qubit; // 2^{t} 
-  let chunk_size = 2 * distance;  // 2^{t+1}
+  let chunk_size = 2 * stride;  // 2^{t+1}
 
   let a = Complex64::new(gate[0][0], 0.0); 
   let b = Complex64::new(gate[1][0], 0.0); 
   let c = Complex64::new(gate[0][1], 0.0); 
   let d = Complex64::new(gate[1][1], 0.0);
 
-  for chunk in state.amplitudes.chunks_exact_mut(chunk_size) { 
-    let (side0, side1) = chunk.split_at_mut(distance);
+  for chunk in state.amplitudes.chunks_exact_mut(chunk_size) {
+    let (side0, side1) = chunk.split_at_mut(stride);
 
     for (x, y) in side0.iter_mut().zip(side1.iter_mut()) { 
       let u = *x * a + *y * b; 
@@ -253,7 +251,7 @@ Transform (FFT).
 
 This post is not meant to discuss the theoretical aspects or the background of
 the FFT. There are a few amazing videos you can watch that cover the FFT. I'd
-highly reccomend the videos by
+highly recommend the videos by
 [Vertiasium](https://www.youtube.com/watch?v=nmgFG7PUHfo), as well as
 [Reducible](https://youtu.be/h7apO7q16V0?si=xfwCJTorF2U7KJ2J). Rather, we want
 to look at the underlying mechanics of the FFT implementation.
@@ -288,21 +286,24 @@ pretty much 90% of the work to be able to implement the FFT when we implemented
 our function that applies a single-qubit gate to a quantum state.
 
 ```rust
-pub fn fft_dit(state: &mut QuantumState) { let n = state.len().ilog2();
-  for stage in 0..n { let stride = 1 << stage; // 2^{t} let chunk_size = 2 *
-    distance; // 2^{t+1}
+pub fn fft_dit(state: &mut QuantumState) {
+  let n = state.len().ilog2();
 
-    for chunk in state.amplitudes.chunks_exact_mut(chunk_size) { 
-      let (side0, side1) = chunk.split_at_mut(distance);
+  for stage in 0..n {
+    let stride = 1 << stage;        // 2^{t}
+    let chunk_size = 2 * stride;    // 2^{t+1}
 
-      for (a, b) in side0.iter_mut().zip(side1.iter_mut()) { 
-        let a_1 = *a + *b * w; 
-        let b_1 = *a - *b * w; 
-        *a = a_1; *b = b_1; 
-      } 
-    } 
-  } 
-} 
+    for chunk in state.amplitudes.chunks_exact_mut(chunk_size) {
+      let (side0, side1) = chunk.split_at_mut(stride);
+
+      for (a, b) in side0.iter_mut().zip(side1.iter_mut()) {
+        let a_1 = *a + *b * w;
+        let b_1 = *a - *b * w;
+        *a = a_1; *b = b_1;
+      }
+    }
+  }
+}
 ```
 
 The computations in the inner-most loop are even simpler than what we
@@ -328,9 +329,9 @@ significant advantage.
 
 From a performance standpoint, there may be tips and tricks in the implementations
 of the FFT that can surely be applied in implementations of high-performance
-quantum state simulators. (Footnote: assuming simulators are . . .)
+quantum state simulators.
 
-For example:
+<!-- TODO: Add examples of FFT optimization techniques applicable to quantum simulators -->
 
 ### Conclusion
 
