@@ -55,7 +55,7 @@ params:
   ShowShareButtons: true
   ShowPostNavLinks: true
   ShowBreadCrumbs: true
-  ShowCodeCopyButtons: false
+  ShowCodeCopyButtons: true
   ShowWordCount: true
   ShowRssButtonInSectionTermList: true
   UseHugoToc: true
@@ -93,35 +93,6 @@ params:
       - name: "Tags"
         url: "tags"
 
-  homeInfoParams:
-    Title: "An Optimization Odyssey"
-    Content: |
-      Hey, I’m Saveliy Yusufov. I first started this blog shortly after I finished college to 
-      document the fascinating ideas I encountered as a new software engineer. Although I paused 
-      for a while, recent learning experiences have reignited my passion for sharing these insights. 
-      Sometimes I find neat ways to optimize code using a bunch of different resources to help me, 
-      and this blog now serves as a way to document the solutions and my experiences.
-
-      >
-
-      If you’re curious about me, I took a non-traditional path after high school. Shortly after 
-      finishing high school, I went into the army, where I served as an 
-      [Army Ranger](https://en.wikipedia.org/wiki/75th_Ranger_Regiment). I never desired 
-      to go to college, and I always thought I’d go into the medical field (at the behest of my family). 
-      In a twist of fate, I discovered programming. That motivated me to go to college to study computer
-      science once I transitioned out of the service. I pursued a CS & Math combined major to prove to
-      myself that I'm not just bad at math (yes, I loathed math in high school and even failed multiple 
-      math classes).
-
-      Shortly after I started programming, I became consumed by the idea of making my code as performant as 
-      possible. Initially, this obsession took the form of fixing low-hanging fruit in code (e.g., 
-      replacing sequential lookups in a large array with a hashmap). Once I discovered the joys of concurrency
-      and parallelism, I became obsessed with leveraging them to improve performance as well. My latest 
-      obsession has been SIMD. Namely, utilizing SIMD to achieve significant performance improvements.
-
-      >
-
-      **Note: All opinions presented in this blog are my own and not my employer's.**
 
   cover:
     hidden: true
@@ -143,6 +114,10 @@ menu:
       name: "posts"
       url: "/posts/"
       weight: 10
+    - identifier: "about"
+      name: "about"
+      url: "/about/"
+      weight: 20
 
 pygmentsUseClasses: true
 markup:
