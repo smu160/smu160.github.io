@@ -44,9 +44,11 @@ params:
   defaultTheme: "auto" # dark, light
   disableThemeToggle: false
 
-  social:
-    github: https://github.com/smu160
-    linkedin: https://linkedin.com/in/saveliy-yusufov-smy
+  socialIcons:
+    - name: github
+      url: "https://github.com/smu160"
+    - name: linkedin
+      url: "https://linkedin.com/in/saveliy-yusufov-smy"
 
   pagination:
     pagerSize: 5
