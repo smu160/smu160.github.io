@@ -1,0 +1,256 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #1c2028;
+  --color-surface: #252b35;
+  --color-border: #363e4a;
+  --color-text: #cdd3de;
+  --color-text-secondary: #8891a0;
+  --color-accent: #6ba1f7;
+  --color-accent-hover: #8db9fa;
+  --color-accent-secondary: #a78bfa;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+html {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgba(107, 161, 247, 0.25);
+}
+
+/* Prose styling for blog posts */
+.prose {
+  line-height: 1.8;
+  font-size: 1.0625rem;
+  letter-spacing: 0.005em;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  color: #e2e6ed;
+  font-weight: 700;
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+}
+
+.prose h1 {
+  font-size: 2rem;
+  letter-spacing: -0.025em;
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+  letter-spacing: -0.015em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.prose h3 {
+  font-size: 1.25rem;
+}
+
+.prose h4 {
+  font-size: 1.125rem;
+}
+
+.prose p {
+  margin-bottom: 1.25em;
+}
+
+.prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+}
+
+.prose a:hover {
+  color: var(--color-accent-hover);
+}
+
+.prose strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.prose em {
+  font-style: italic;
+}
+
+.prose ul,
+.prose ol {
+  margin-bottom: 1.25em;
+  padding-left: 1.5em;
+}
+
+.prose ul {
+  list-style-type: disc;
+}
+
+.prose ol {
+  list-style-type: decimal;
+}
+
+.prose li {
+  margin-bottom: 0.375em;
+}
+
+.prose blockquote {
+  border-left: 3px solid color-mix(in srgb, var(--color-accent) 50%, transparent);
+  padding-left: 1em;
+  margin: 1.5em 0;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1.5em 0;
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 2em 0;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid var(--color-border);
+  padding: 0.5em 0.75em;
+  text-align: left;
+}
+
+.prose th {
+  background-color: var(--color-surface);
+  font-weight: 600;
+}
+
+/* Code blocks */
+.prose pre {
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--color-border);
+  border-left: 3px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+  border-radius: 0.5rem;
+  padding: 1em;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.prose code {
+  font-family: var(--font-mono);
+}
+
+.prose :not(pre) > code {
+  background-color: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  padding: 0.125em 0.375em;
+  font-size: 0.875em;
+  color: #dbe2f0;
+}
+
+
+/* Hide KaTeX MathML annotation to prevent doubled rendering */
+.katex-mathml {
+  display: none !important;
+}
+
+/* Post card hover effect */
+.post-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 20px rgba(107, 161, 247, 0.1);
+}
+
+/* Header gradient separator */
+.header-nav::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(107, 161, 247, 0.3) 30%,
+    rgba(167, 139, 250, 0.3) 70%,
+    transparent
+  );
+}
+
+/* Footer gradient separator */
+.footer-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-border) 30%,
+    var(--color-border) 70%,
+    transparent
+  );
+}
+
+/* Site title gradient hover */
+.site-title {
+  transition: color 0.2s ease;
+}
+
+.site-title:hover {
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-secondary));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Content fade-in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+main {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main {
+    animation: none;
+  }
+}
