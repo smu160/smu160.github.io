@@ -5,7 +5,7 @@
   --color-surface: #252b35;
   --color-border: #363e4a;
   --color-text: #cdd3de;
-  --color-text-secondary: #8891a0;
+  --color-text-secondary: #96a0b0;
   --color-accent: #6ba1f7;
   --color-accent-hover: #8db9fa;
   --color-accent-secondary: #a78bfa;
@@ -28,8 +28,9 @@ html {
 
 /* Prose styling for blog posts */
 .prose {
-  line-height: 1.8;
-  font-size: 1.0625rem;
+  max-width: 65ch;
+  line-height: 1.65;
+  font-size: 1.125rem;
   letter-spacing: 0.005em;
 }
 
@@ -39,28 +40,29 @@ html {
 .prose h4 {
   color: #e2e6ed;
   font-weight: 700;
+  line-height: 1.25;
   margin-top: 2em;
   margin-bottom: 0.75em;
 }
 
 .prose h1 {
-  font-size: 2rem;
+  font-size: 2.25rem;
   letter-spacing: -0.025em;
 }
 
 .prose h2 {
-  font-size: 1.5rem;
+  font-size: 1.625rem;
   letter-spacing: -0.015em;
   padding-bottom: 0.5em;
   border-bottom: 1px solid var(--color-border);
 }
 
 .prose h3 {
-  font-size: 1.25rem;
+  font-size: 1.375rem;
 }
 
 .prose h4 {
-  font-size: 1.125rem;
+  font-size: 1.1875rem;
 }
 
 .prose p {
@@ -153,7 +155,7 @@ html {
   padding: 1em;
   overflow-x: auto;
   margin: 1.5em 0;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   line-height: 1.7;
 }
 
