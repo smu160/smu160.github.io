@@ -32,8 +32,8 @@ quality, etc.
 Now, let's consider a real-world missile defense system. The U.S. Ground-Based
 Midcourse Defense (GMD) system uses Ground-Based Interceptors (GBIs) designed
 to intercept ICBMs. Estimates place the GBI's SSPK at roughly 56%, based on the
-system's intercept test record [4]. Each GBI costs approximately $75 million,
-and as of 2024, 44 are reportedly deployed across Alaska and California [4].
+system's intercept test record [3]. Each GBI costs approximately $75 million,
+and as of 2024, 44 are reportedly deployed across Alaska and California [3].
 
 Hence, a single GBI that costs $75 million offers a 56% chance of successfully
 intercepting an incoming nuclear warhead. That's better than a coin flip, but
@@ -47,8 +47,8 @@ achieve a successful hit.
 
 Note that the independence assumption is optimistic and may not reflect
 reality. If interceptor failures are correlated (e.g., all interceptors rely on
-misidentify a decoy as the real warhead), the actual SSPK will be lower than
-what this formula predicts.
+the same tracking data and misidentify a decoy as the real warhead), the actual
+kill probability will be lower than what this formula predicts.
 
 Now, we can compute the probability of at least one interceptor successfully
 knocking out an incoming nuclear warhead.
@@ -112,7 +112,7 @@ all of these steps can fail. If any of those steps fail, it doesn't matter how
 many interceptors you are willing to expend.
 
 Wilkerson formalizes this with a probability $P(\text{track})$ that captures
-the entire detection-tracking-classification-C2 pipeline [6]. The comprehensive
+the entire detection-tracking-classification-C2 pipeline [5]. The comprehensive
 kill probability becomes:
 
 $$
@@ -135,14 +135,14 @@ Here's what the kill probability table looks like when $P(\text{track}) < 1$:
 | 5 | 98.35% | 93.43% | 88.52% |
 
 At $P(\text{track}) = 0.90$, the "96% kill probability" with 4 interceptors
-drops to under 87%. You'd need 5 interceptors — \$375M — just to match what the
-idealized model promised with 3.
+drops to under 87%. Even 5 interceptors — \$375M — only reach 89%, still short
+of what the idealized model achieves with just 3.
 
 Wilkerson's analysis finds that for national missile defense to achieve 80%
 confidence of destroying all warheads against even modest attacks (4–20 reentry
 vehicles), $P(\text{track})$ must exceed **0.978**. Below that threshold, no
 amount of SSPK improvement is sufficient. This is an extraordinarily high bar
--- the entire pipeline (i.e., detection, tracking, classification, etc. must
+-- the entire pipeline (i.e., detection, tracking, classification, etc.) must
 work nearly perfectly, nearly every time.
 
 The kill probabilities in the previous section are best-case numbers. The
@@ -204,12 +204,16 @@ $$
 \sum_{j=1}^{W} x_{ij} = 1, \quad \forall \, i = 1, \ldots, I
 $$
 
+(This formulation commits all interceptors. A variant using $\leq 1$ allows holding reserves, which may be preferable in multi-wave scenarios.)
+
 Put simply: for each warhead, the product $\prod_{i=1}^{I}(1 -
 p_{ij})^{x_{ij}}$ gives the probability that *every* interceptor assigned to it
 misses. Taking that product and subtracting it from $1$ gives the probability
 that at least one interceptor hits (i.e., the warhead is successfully
 intercepted). Multiply by $V_j$ to get the expected value saved by defending
 that target. Sum over all targets, and you want to maximize this total.
+
+Note that a more complete model would multiply each term by $P(\text{track})_j$ — the common-mode detection-tracking-classification factor developed in the previous section — but the standard WTA formulation assumes perfect tracking.
 
 In 1986, Lloyd and Witsenhausen proved that the decision version of WTA is
 NP-complete by reduction from 3-dimensional matching [1]. Hence, in theory,
@@ -228,7 +232,7 @@ nuclear-armed adversary. Wilkerson's model makes this even starker. That is,
 defending against just 20 warheads in barrage mode requires **113
 interceptors** (at $P(\text{track}) = 0.99$, $sspk = 0.70$) — far exceeding the
 current inventory. Even shoot-look-shoot, the most efficient firing doctrine,
-requires 47 [6].
+requires 47 [5].
 
 ### Saturation attacks
 If the defender must allocate 4 interceptors per warhead for a 96% probability
@@ -242,7 +246,7 @@ A single warhead can deploy many decoys that are difficult to distinguish from
 the real warheads. Wilkerson formalizes this with classification
 probabilities: let $P_{ww}$ be the probability a warhead is correctly
 classified as a warhead, and $P_{dw}$ be the probability a decoy is
-*mis*classified as a warhead (a Type II error) [6]. The apparent number of
+*mis*classified as a warhead (a Type II error) [5]. The apparent number of
 warheads the defense must engage is:
 
 $$
@@ -254,7 +258,7 @@ discrimination is poor (i.e., $P_{dw}$ is close to $1.0$), the defense must
 engage nearly every object. With $P(\text{track}) = 0.99$, $sspk = 0.70$, and a
 requirement of 80% confidence that all warheads are destroyed: 10 warheads
 accompanied by just 10 decoys already demands **73 interceptors** in barrage
-mode [6].
+mode [5].
 
 Each undiscriminated decoy is another warhead in the WTA formulation. Decoys
 don't just spread interceptors thin -- they inflate $W$, and
@@ -269,14 +273,26 @@ intractability of optimal assignment, structurally favors the offense.
 ## Discussion
 
 At current scales, the missile defense allocation problem is solvable.
-Indeed, 44 interceptors against 12 warheads is a problem that even scipy's
-milp solver can handle in seconds [citation needed]. This is true, and beside
+A WTA instance with 44 interceptors and 12 warheads has roughly
+$44 \times 12 = 528$ binary decision variables — well within the range that
+modern MIP solvers handle in seconds. This is true, and beside
 the point. The computational difficulty of WTA isn't what makes missile defense
 hard today. Rather, the stockpile arithmetic alone is damning enough. What
 NP-completeness tells you is how the problem scales, and the scaling is
-asymmetric in a way that permanently favors the offense. This asymmetry is
-structural. The U.S. is now considering a missile defense shield with cost
-estimates ranging from $175 billion to $3.6 trillion. 
+asymmetric in a way that permanently favors the offense.
+
+The number of feasible assignments for a WTA instance is $W^I$: each of $I$
+interceptors can be assigned to any of $W$ warheads. For the current GMD
+inventory, that is $12^{44} \approx 10^{47}$ possible assignments. Scale to a
+future architecture with 500 interceptors and 200 threat objects and the space
+becomes $200^{500} \approx 10^{1150}$. Each additional warhead or
+undiscriminated decoy the attacker adds multiplies the defender's solution
+space by a factor of $\left(\frac{W+1}{W}\right)^I$. The offense scales
+linearly; the defense scales combinatorially.
+
+This asymmetry is structural. The U.S. is now considering a continental
+missile defense shield [4] with cost estimates ranging from \$175 billion to
+\$3.6 trillion [6].
 The math reviewed here is unclassified. The formulations are public. The
 constraints they impose don't require a security clearance to understand.
 
@@ -284,7 +300,7 @@ constraints they impose don't require a security clearance to understand.
 
 1. S. P. Lloyd and H. S. Witsenhausen, "Weapons Allocation is NP-Complete," *Proceedings of the 1986 Summer Computer Simulation Conference*, 1986.
 2. R. K. Ahuja, A. Kumar, K. C. Jha, and J. B. Orlin, "Exact and Heuristic Algorithms for the Weapon-Target Assignment Problem," *Operations Research*, vol. 55, no. 6, pp. 1136–1146, 2007.
-3. "Weapon target assignment problem," *Wikipedia*. https://en.wikipedia.org/wiki/Weapon_target_assignment_problem
-4. "Ground-based Midcourse Defense (GMD)," *CSIS Missile Defense Project*. https://missilethreat.csis.org/system/gmd/
-5. "Golden Dome," *CSIS Missile Defense Project*. https://missilethreat.csis.org/system/golden-dome/
-6. D. A. Wilkerson, "A Simple Model for Calculating Ballistic Missile Defense Effectiveness," Center for International Security and Cooperation, Stanford University, August 1998.
+3. "Ground-based Midcourse Defense (GMD)," *CSIS Missile Defense Project*. https://missilethreat.csis.org/system/gmd/
+4. "Golden Dome," *CSIS Missile Defense Project*. https://missilethreat.csis.org/system/golden-dome/
+5. D. A. Wilkerson, "A Simple Model for Calculating Ballistic Missile Defense Effectiveness," Center for International Security and Cooperation, Stanford University, August 1998.
+6. T. Harrison, "Build Your Own Golden Dome: A Framework for Understanding Costs, Choices, and Tradeoffs," American Enterprise Institute, 2025.
