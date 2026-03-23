@@ -4,25 +4,21 @@ date: 2026-03-05
 draft: false
 math: "katex"
 summary: "Why optimally assigning interceptors to incoming warheads is computationally intractable, and what that means for the real world."
-description: "Exploring the Weapon-Target Assignment problem: how missile defense connects to NP-completeness, SSPK probability calculations, and why saturation attacks exploit computational limits."
+description: "Exploring the Weapon-Target Assignment problem: how missile defense connects to NP-completeness, SSPK probability calculations, and how saturation attacks exploit computational limits."
 author: "Saveliy Yusufov"
-tags: ["optimization", "NP-complete", "combinatorics", "operations-research", "probability"]
+tags: ["optimization", "NP-complete", "missile-defense", "operations-research", "probability"]
 categories: ["Algorithms", "Optimization"]
 toc: true
 ---
-
-Recent events have put missile defense back into the public spotlight. The
-debate tends to center on interceptor stockpiles and budget. At times, I have
-found myself a bit exasperated reading some of the commentary. So, this post is
-about something more fundamental: the math of the allocation problem itself. 
 
 Imagine you're responsible for defending a region from incoming nuclear
 warheads. Your systems inform you of 3 incoming missiles, and you have 7
 interceptors available to you. The question you would find yourself asking is
 how do you allocate your interceptors such that you *maximize* expected survival?
-Before we can even attempt to answer this, we need to get our bearings.
+It turns out that this allocation problem is NP-complete. But before we get to
+why, we need to understand how unreliable a single intercept actually is.
 
-## SSPK: How Good Is a Single Interceptor?
+## SSPK: How good is a single interceptor?
 
 Single Shot Probability of Kill (SSPK) is the probability that an individual
 interceptor successfully intercepts one warhead in a single engagement. SSPK
@@ -37,18 +33,21 @@ and as of 2024, 44 are reportedly deployed across Alaska and California [3].
 
 Hence, a single GBI that costs $75 million offers a 56% chance of successfully
 intercepting an incoming nuclear warhead. That's better than a coin flip, but
-not by much. 
+not by much. Note that SSPK figures derived from controlled flight tests are
+generally more favorable than what would be expected under real operational
+conditions.
 
 ## Improving the Odds: Assign Multiple Interceptors per Warhead
+<figure>
+  <img
+  src="/images/two_interceptors_one_warhead.gif"
+  alt="Two interceptors assigned to one warhead">
+  <figcaption>Two interceptors engaging a single warhead in a recent conflict [11]</figcaption>
+</figure>
 
 First and foremost, let's assume that interceptor failures are **independent**.
 That is, one interceptor missing doesn't affect whether another is able to
 achieve a successful hit. 
-
-Note that the independence assumption is optimistic and may not reflect
-reality. If interceptor failures are correlated (e.g., all interceptors rely on
-the same tracking data and misidentify a decoy as the real warhead), the actual
-kill probability will be lower than what this formula predicts.
 
 Now, we can compute the probability of at least one interceptor successfully
 knocking out an incoming nuclear warhead.
@@ -75,6 +74,12 @@ $$
 P(\text{kill}) = 1 - (1 - 0.56)^{4} \approx 0.9625 \approx 96\%
 $$
 
+Note that the independence assumption is optimistic and may not reflect
+reality. If interceptor failures are correlated (e.g., all interceptors rely on
+the same tracking data and misidentify a decoy as the real warhead), the actual
+probability of successful intercept will be lower than what this formula
+predicts.
+
 Here's how the kill probability scales with additional interceptors:
 
 | Interceptors ($n$) | $P(\text{kill})$ |
@@ -85,44 +90,34 @@ Here's how the kill probability scales with additional interceptors:
 | 4                  | 96.25% |
 | 5                  | 98.35% |
 
-<figure>
-  <img
-  src="/images/two_interceptors_one_warhead.gif"
-  alt="Two Interceptors, One Warhead">
-  <figcaption>Two interceptors engaging a single warhead in a recent conflict</figcaption>
-</figure>
-
 
 Hence, for one warhead, a defender can launch $4$ interceptors and have a 96%
 chance of successfully intercepting the incoming warhead. 
 
-This is already starting to sound quite costly and inefficient, right? At a
-cost of \$75M per interceptor, you'd need to expend **\$300M** in order to have,
-at best, a 96% chance of interception.
-
-But those numbers are optimistic. Here's why.
+Unfortunately, those numbers are optimistic.
 
 ## $P(\text{track})$: What SSPK Doesn't Capture
 
-The formula $P(\text{kill}) = 1 - (1 - sspk)^n$ assumes you've already
-successfully detected the incoming warhead, tracked it with enough precision to
-commit an interceptor, correctly classified it as a real warhead (i.e., not a
-decoy), and that your command and control systems are functional. In reality,
-all of these steps can fail. If any of those steps fail, it doesn't matter how
-many interceptors you are willing to expend.
+You can't hit what you can't see. The formula $P(\text{kill}) = 1 - (1 -
+sspk)^n$ assumes you've already successfully detected the incoming warhead,
+tracked it with enough precision to commit an interceptor, correctly classified
+it as a real warhead (i.e., not a decoy), and that your command & control
+systems are functional. In reality, all of these steps can fail. In that case,
+it doesn't matter how many more interceptors you are willing to expend.
 
-Wilkerson formalizes this with a probability $P(\text{track})$ that captures
-the entire detection-tracking-classification-C2 pipeline [5]. The comprehensive
-kill probability becomes:
+Wilkening (1998) formalizes this concept with a probability
+$P(\text{track})$ that captures the entire
+detection-tracking-classification-command&control pipeline [5]. The
+comprehensive kill probability becomes:
 
 $$
 K_w = P(\text{track}) \times \left[1 - (1 - sspk)^n\right]
 $$
 
-This is a *common mode* factor: if the target is never detected or is
-misclassified as debris, every interceptor assigned to it fails — their
-failures are no longer independent. The independence assumption from
-the previous section is conditional upon successful tracking.
+This is a *common mode* factor. That is, if the target is never detected or is
+misclassified as debris, then every interceptor assigned to it fails. The
+independence assumption from the previous section is conditional upon
+successful tracking.
 
 Here's what the kill probability table looks like when $P(\text{track}) < 1$:
 
@@ -135,28 +130,48 @@ Here's what the kill probability table looks like when $P(\text{track}) < 1$:
 | 5 | 98.35% | 93.43% | 88.52% |
 
 At $P(\text{track}) = 0.90$, the "96% kill probability" with 4 interceptors
-drops to under 87%. Even 5 interceptors — \$375M — only reach 89%, still short
+drops to under 87%. Even an allocation of 5 interceptors reaches only 89%, still short
 of what the idealized model achieves with just 3.
 
-Wilkerson's analysis finds that for national missile defense to achieve 80%
+Wilkening's analysis shows that for national missile defense to achieve 80%
 confidence of destroying all warheads against even modest attacks (4–20 reentry
-vehicles), $P(\text{track})$ must exceed **0.978**. Below that threshold, no
+vehicles), you need $P(\text{track}) > 0.978$. Below that threshold, no
 amount of SSPK improvement is sufficient. This is an extraordinarily high bar
 -- the entire pipeline (i.e., detection, tracking, classification, etc.) must
 work nearly perfectly, nearly every time.
 
-The kill probabilities in the previous section are best-case numbers. The
-effective kill probability in the real world is always lower, because
-$P(\text{track})$ is always less than 1.
+Hence, the probabilities of successful interception in the previous section are
+best case. The effective kill probability in the real world is always
+lower, because $P(\text{track})$ is always less than 1.
 
-Now what if your adversary fires more than one?
+And $P(\text{track})$ is not just passively less than $1$ -- an adversary will
+actively try to drive it toward zero. Recent events have demonstrated this
+directly. Namely, missile defense radars have been successfully targeted and
+destroyed in the (as of today's date) active conflict, eliminating tracking
+coverage for entire regions [7][8][9]. These sensors cost hundreds of
+millions to billions of dollars each. Destroying or degrading them doesn't just
+reduce $P(\text{track})$ -- it can eliminate it entirely for the coverage area
+those radars served. No amount of interceptors can compensate for a tracking
+pipeline that no longer exists.
 
-## Multiple Targets
+This tracking issue also comes up in one of the more [pernicious software
+bugs](https://www.youtube.com/watch?v=_Dbd3z8t9qc) of all time -- the 1991
+Patriot missile failure. A cumulative fixed-point truncation error in the
+system's clock caused the tracking radar to look in the wrong part of the sky,
+and the incoming Scud missile was never tracked. Twenty-eight servicemembers
+were killed. The interceptors were physically capable, but $P(\text{track})$
+was effectively zero.
 
-Now suppose you have $I = 7$ interceptors and $W = 3$ incoming warheads, as in
-our opening scenario. The warheads have different targets: warhead A is headed
-for a major city, warhead B for a military base, and warhead C for an empty
-field. How should you allocate your interceptors?
+For now, let's assume we have great tracking. What happens when the adversary
+fires more than one missile?
+
+## Multiple Incoming Missiles
+
+You have $I = 7$ interceptors and $W = 3$ incoming warheads, as in
+our opening scenario. We'll also leave out the $P(\text{track})$ and consider
+the idealized case. The warheads have different targets: warhead $A$ is headed
+for a major city, warhead $B$ for an airport, and warhead $C$ for a military
+base. How should you allocate your interceptors?
 
 | Allocation | $P(\text{kill A})$ | $P(\text{kill B})$ | $P(\text{kill C})$ |
 |:---|:---:|:---:|:---:|
@@ -166,25 +181,32 @@ field. How should you allocate your interceptors?
 | 2 to $A$, 2 to $B$, 3 to $C$ | 80.64% | 80.64% | 91.48% |
 
 The "right" allocation depends on the relative values of the targets.
-Protecting the city at 96% while leaving the empty field at 56% might be
-optimal.
 
 Now let's scale this up. Assume an inventory of $44$ interceptors and $15$
 incoming warheads. Each warhead is aimed at a different city, each with
 different estimated values, and each interceptor has a different SSPK against
-each warhead -- depending on geometry and timing. Then, the number of possible
-assignments explodes combinatorially. The optimal assignment is no longer
-obvious. 
+each warhead -- depending on geometry, timing, and type of interceptor. Then,
+the number of possible assignments explodes combinatorially.
 
 ## The Weapon-Target Assignment Problem
 
-The allocation problem above has a formal name: the Weapon-Target Assignment (WTA) problem. Here is the standard formulation.
+The allocation problem above has a formal name: the Weapon-Target Assignment
+(WTA) problem. Note that the formulation uses per-pair probabilities $p_{ij}$,
+which naturally accommodate heterogeneous interceptor types. For example, the U.S. missile
+defense architecture includes GBIs for midcourse ICBM intercept, THAAD and
+SM-3 for regional and exoatmospheric defense, SM-6 for terminal-phase
+engagements, and Patriot PAC-3 for short-range point defense. A GBI engaging an
+ICBM in midcourse will have a different SSPK than a THAAD interceptor engaging
+the same target in its terminal phase. These differences are encoded in the
+data (the $p_{ij}$ matrix), not in the formulation structure. Interceptor-target
+pairings that are physically infeasible (e.g., a Patriot engaging an ICBM in
+midcourse) are represented by $p_{ij} = 0$.
 
 Given:
 
-$I$ weapons (interceptors), indexed $i = 1, \ldots, I$
+$I$ interceptors (weapons), indexed $i = 1, \ldots, I$
 
-$W$ targets (incoming warheads), indexed $j = 1, \ldots, W$
+$W$ warheads (targets), indexed $j = 1, \ldots, W$
 
 A **value** $V_j > 0$ for each warhead (the value of the asset that warhead $j$ threatens)
 
@@ -192,19 +214,19 @@ An **SSPK matrix** $p_{ij} \in [0, 1]$: the probability that interceptor $i$ des
 
 Decision variables $x_{ij} \in \{0, 1\}$: whether interceptor $i$ is assigned to warhead $j$
 
-The objective is to maximize the **total expected survival value**:
+The objective is to maximize the **total expected value of successfully defended assets**:
 
 $$
 \max \sum_{j=1}^{W} V_j \left(1 - \prod_{i=1}^{I} (1 - p_{ij})^{x_{ij}}\right)
 $$
 
-subject to each interceptor being assigned to exactly one warhead:
+subject to each interceptor being assigned to at most one warhead:
 
 $$
-\sum_{j=1}^{W} x_{ij} = 1, \quad \forall \, i = 1, \ldots, I
+\sum_{j=1}^{W} x_{ij} \leq 1, \quad \forall \, i = 1, \ldots, I
 $$
 
-(This formulation commits all interceptors. A variant using $\leq 1$ allows holding reserves, which may be preferable in multi-wave scenarios.)
+(Using $\leq 1$ rather than $= 1$ allows holding interceptors in reserve, which is preferable in multi-wave scenarios or when using a shoot-look-shoot doctrine.)
 
 Put simply: for each warhead, the product $\prod_{i=1}^{I}(1 -
 p_{ij})^{x_{ij}}$ gives the probability that *every* interceptor assigned to it
@@ -213,88 +235,116 @@ that at least one interceptor hits (i.e., the warhead is successfully
 intercepted). Multiply by $V_j$ to get the expected value saved by defending
 that target. Sum over all targets, and you want to maximize this total.
 
-Note that a more complete model would multiply each term by $P(\text{track})_j$ — the common-mode detection-tracking-classification factor developed in the previous section — but the standard WTA formulation assumes perfect tracking.
+This is the *static* WTA -- a single-stage commitment of all assignments before
+any engagement results are observed. The *dynamic* WTA, where assignments are
+revised as intercept results and new threats arrive, is operationally more
+realistic and computationally harder.
 
-In 1986, Lloyd and Witsenhausen proved that the decision version of WTA is
-NP-complete by reduction from 3-dimensional matching [1]. Hence, in theory,
-there is no known algorithm that finds the optimal assignment in time that
-scales polynomially with the number of weapons and targets. In practice, real
-systems use heuristic and approximate algorithms that find good-enough
-solutions quickly [2].
+Note that a more complete model would multiply each term by $P(\text{track})_j$
+-- the common-mode detection-tracking-classification factor developed in the
+previous section -- but the standard WTA formulation assumes perfect tracking.
 
-## Real World Implications
+In 1986, Lloyd and Witsenhausen proved that the decision version of the WTA
+problem is NP-complete [1]: given a threshold $T$, determining whether there
+exists a feasible assignment with total expected value saved $\geq T$ is
+NP-complete. (The corresponding optimization problem is NP-hard.)
 
-### Stockpile arithmetic & attrition
-If you need 4 interceptors per warhead for a 96% chance of intercepting an
-incoming nuclear warhead, then 44 GBIs *may* provide reliable defense against
-at most $\frac{44}{4} = 11$ ICBMs. That's a thin margin against any
-nuclear-armed adversary. Wilkerson's model makes this even starker. That is,
-defending against just 20 warheads in barrage mode requires **113
-interceptors** (at $P(\text{track}) = 0.99$, $sspk = 0.70$) — far exceeding the
-current inventory. Even shoot-look-shoot, the most efficient firing doctrine,
-requires 47 [5].
+Why is this hard? In a linear assignment problem (e.g., assign workers to
+tasks to minimize total cost), the value of each assignment is independent of
+every other -- the cost of assigning worker $i$ to task $j$ doesn't change
+based on other assignments. Despite having $n!$ feasible solutions, this
+structure allows polynomial-time algorithms like the Hungarian method. WTA
+breaks this property. The product terms in the objective mean that the marginal
+value of assigning an additional interceptor to a target *depends on how many
+are already assigned there* -- there are diminishing returns. This couples all
+assignments together: you cannot evaluate one assignment without knowing the
+rest. This nonlinearity destroys the decomposition properties that make the
+linear assignment problem tractable.
 
-### Saturation attacks
-If the defender must allocate 4 interceptors per warhead for a 96% probability
-of successful interception, an attacker needs only $\lfloor I/4 \rfloor + 1$
-warheads to guarantee that at least one gets through with high probability. The
-defender's computational problem also gets harder: more targets means more
-possible assignments.
-
-### Decoys and countermeasures
-A single warhead can deploy many decoys that are difficult to distinguish from
-the real warheads. Wilkerson formalizes this with classification
-probabilities: let $P_{ww}$ be the probability a warhead is correctly
+And $W$ is likely larger than the number of real warheads. A single warhead can
+deploy many decoys that are difficult to distinguish from real reentry vehicles
+in the midcourse phase. Wilkening formalizes this with classification
+probabilities [5]: let $P_{ww}$ be the probability a warhead is correctly
 classified as a warhead, and $P_{dw}$ be the probability a decoy is
-*mis*classified as a warhead (a Type II error) [5]. The apparent number of
-warheads the defense must engage is:
+*mis*classified as a warhead. The effective number of targets the defense must
+engage becomes:
 
 $$
 W^* = W \cdot P_{ww} + D \cdot P_{dw}
 $$
 
-where $W$ is the true warhead count and $D$ is the number of decoys. If
-discrimination is poor (i.e., $P_{dw}$ is close to $1.0$), the defense must
-engage nearly every object. With $P(\text{track}) = 0.99$, $sspk = 0.70$, and a
-requirement of 80% confidence that all warheads are destroyed: 10 warheads
-accompanied by just 10 decoys already demands **73 interceptors** in barrage
-mode [5].
+where $D$ is the number of decoys. If discrimination is poor ($P_{dw}$ close to
+$1.0$), every decoy looks like a warhead. Each undiscriminated decoy is another
+column in the SSPK matrix, another target in the WTA objective function -- it
+inflates $W$ and directly increases the complexity of the allocation problem.
 
-Each undiscriminated decoy is another warhead in the WTA formulation. Decoys
-don't just spread interceptors thin -- they inflate $W$, and
-increase the complexity of the allocation problem.
+What NP-completeness tells you is how the problem *scales*, and the scaling is
+asymmetric in a way that structurally favors the offense. The attacker can
+always add a warhead or decoy at marginal cost. Moreover, even with an oracle
+that solves WTA instantly and to global optimality, the inputs to the oracle
+are bound to be imperfect. Hence, the "optimal" solution is likely to be
+sub-optimal in terms of the defense.
 
-### Cost Asymmetry
-At \$75M per interceptor, the defense is far more expensive than the offense.
-Adding 10 more interceptors costs \$750M. Adding 10 more warheads and/or decoys
-costs a fraction of that. This asymmetry, compounded by the computational
-intractability of optimal assignment, structurally favors the offense.
+That said, NP-completeness does not mean practically unsolvable. Modern exact
+algorithms can solve WTA instances far beyond operationally relevant scales.
+Bertsimas and Paskov (2025) developed a branch-price-and-cut algorithm that
+exploits the problem's structure through decomposition, solving instances with
+10,000 weapons and 10,000 targets to provable optimality in under 7 minutes on
+a laptop [10]. Instances with 1,000 targets and 1,500 weapons solve in
+seconds. For comparison, the prior state-of-the-art timed out at 2 hours for
+problems with more than 400 weapons. This is a common phenomenon in
+combinatorial optimization: many NP-hard problems are routinely solved to
+optimality at practical scales using modern solvers and decomposition
+techniques.
 
 ## Discussion
 
-At current scales, the missile defense allocation problem is solvable.
-A WTA instance with 44 interceptors and 12 warheads has roughly
-$44 \times 12 = 528$ binary decision variables — well within the range that
-modern MIP solvers handle in seconds. This is true, and beside
-the point. The computational difficulty of WTA isn't what makes missile defense
-hard today. Rather, the stockpile arithmetic alone is damning enough. What
-NP-completeness tells you is how the problem scales, and the scaling is
-asymmetric in a way that permanently favors the offense.
+To recap, let's plug in the real numbers once more. If you need 4 interceptors
+per warhead for a 96% chance of interception, then 44 GBIs provide reliable
+defense against at most $\frac{44}{4} = 11$ ICBMs. That is the entire U.S.
+ground-based midcourse defense against the ICBM threat. GMD was sized to
+counter a limited rogue-state threat -- not a peer arsenal -- but even against
+that design scenario, the margins are thin. Wilkening's model makes
+this starker: defending against 20 warheads in barrage mode requires **113
+interceptors** (at $P(\text{track}) = 0.99$, $sspk = 0.70$) -- far exceeding
+the current inventory. Even shoot-look-shoot, the most efficient firing
+doctrine, requires 47 [5]. An attacker needs only $\lfloor I/4 \rfloor + 1$
+warheads to ensure at least one faces fewer than 4 interceptors. With the
+current inventory, that threshold is 12. Add decoys, and things degenerate
+fast. For example, a barrage of 10 warheads accompanied by just 10 decoys
+already demands **73 interceptors**, with the $P(\text{track})$ and $sspk$
+values from above [5].
 
-The number of feasible assignments for a WTA instance is $W^I$: each of $I$
-interceptors can be assigned to any of $W$ warheads. For the current GMD
-inventory, that is $12^{44} \approx 10^{47}$ possible assignments. Scale to a
-future architecture with 500 interceptors and 200 threat objects and the space
-becomes $200^{500} \approx 10^{1150}$. Each additional warhead or
-undiscriminated decoy the attacker adds multiplies the defender's solution
-space by a factor of $\left(\frac{W+1}{W}\right)^I$. The offense scales
-linearly; the defense scales combinatorially.
+Directed energy has been proposed as a more cost-effective and reliable
+alternative. Laser interceptors dramatically reduce the per-shot cost, which
+does address the cost asymmetry. Nevertheless, directed energy introduces its
+own constraints. Coverage requires enough platforms in the right places;
+atmospheric absorption and scattering degrade beam effectiveness from
+ground-based systems, which is why the recently proposed "Golden Dome" project
+emphasizes satellite constellations [4]. In addition,
+each laser must dwell on a target long enough to ensure a successful
+interception. Against a salvo, dwell time turns missile defense into a
+scheduling problem: which targets to engage, in what order, for how long, given
+that every second spent on one target is a second unavailable for another. This
+is a different optimization problem, but it has the same flavor, and its own
+set of issues with respect to scaling.
 
-This asymmetry is structural. The U.S. is now considering a continental
-missile defense shield [4] with cost estimates ranging from \$175 billion to
-\$3.6 trillion [6].
-The math reviewed here is unclassified. The formulations are public. The
-constraints they impose don't require a security clearance to understand.
+In practice, real missile defense architectures are layered: boost-phase,
+midcourse, and terminal-phase interceptors each get an engagement opportunity,
+and the kill probabilities compound across layers. Layering improves overall
+effectiveness, but it also multiplies the complexity of the allocation problem
+-- each layer solves its own WTA, and the layers interact because a miss in one
+creates demand in the next.
+
+Finally, the analysis above treats missile defense as a one-sided optimization,
+but it is fundamentally a game. Just as the defender solves WTA to maximize
+expected survival, the attacker solves its own allocation problem --
+distributing warheads and decoys across targets to *minimize* the defender's
+expected survival. The attacker has structural advantages: they choose the
+problem size (how many warheads and decoys to deploy), they can observe the
+defense architecture before committing, and they move first. The defender must
+prepare for a range of possible attacks; the attacker need only optimize
+against the defense that exists.
 
 ## References
 
@@ -302,5 +352,10 @@ constraints they impose don't require a security clearance to understand.
 2. R. K. Ahuja, A. Kumar, K. C. Jha, and J. B. Orlin, "Exact and Heuristic Algorithms for the Weapon-Target Assignment Problem," *Operations Research*, vol. 55, no. 6, pp. 1136–1146, 2007.
 3. "Ground-based Midcourse Defense (GMD)," *CSIS Missile Defense Project*. https://missilethreat.csis.org/system/gmd/
 4. "Golden Dome," *CSIS Missile Defense Project*. https://missilethreat.csis.org/system/golden-dome/
-5. D. A. Wilkerson, "A Simple Model for Calculating Ballistic Missile Defense Effectiveness," Center for International Security and Cooperation, Stanford University, August 1998.
+5. D. A. Wilkening, "A Simple Model for Calculating Ballistic Missile Defense Effectiveness," Center for International Security and Cooperation, Stanford University, August 1998.
 6. T. Harrison, "Build Your Own Golden Dome: A Framework for Understanding Costs, Choices, and Tradeoffs," American Enterprise Institute, 2025.
+7. "Iranian Attacks on Critical Missile Defense Radars Are a Wake-Up Call," *The War Zone*, 2026. https://www.twz.com/news-features/iranian-attacks-on-critical-missile-defense-radars-are-a-wake-up-call
+8. "Iran Hits Key US Radar, Deepening Gulf Missile Defense Woes," *Bloomberg*, 2026. https://www.bloomberg.com/news/articles/2026-03-06/iran-hits-key-us-radar-deepening-gulf-missile-defense-woes
+9. "Iran Strikes U.S. Military Communication Infrastructure in Mideast," *The New York Times*, 2026. https://www.nytimes.com/2026/03/03/world/middleeast/iran-strikes-us-military-communication-infrastructure-in-mideast.html
+10. D. Bertsimas and A. Paskov, "Solving Large-Scale Weapon Target Assignment Problems in Seconds Using Branch-Price-And-Cut," *Naval Research Logistics*, vol. 72, pp. 735–749, 2025.
+11. "Israeli civilian films double-team interception," *r/CombatFootage*, 2025. https://www.reddit.com/r/CombatFootage/comments/1rrqklj/israeli_civilian_films_doubleteam_interception_of/
