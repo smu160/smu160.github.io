@@ -1,6 +1,6 @@
 ---
 title: "Missile Defense is NP-Complete"
-date: 2026-03-05
+date: 2026-03-24
 draft: false
 math: "katex"
 summary: "Why optimally assigning interceptors to incoming warheads is computationally intractable, and what that means for the real world."
