@@ -171,8 +171,8 @@ $x$ by $2$, and we create a set using the square brackets, $[x]$.
 
 It follows that in the case of mod $2$, we have boxes labeled $0$ and $1$.
 The box labeled 0 we have all multiples of $2$. More formally, we define it
-as all integers of the form $2k + 1$, where $k \in \mathbb{Z}$. The box
-labeled $1$ containers all integers of the form $2k + 1$, where $k \in \mathbb{Z}$:
+as all integers of the form $2k$, where $k \in \mathbb{Z}$. The box
+labeled $1$ contains all integers of the form $2k + 1$, where $k \in \mathbb{Z}$:
 
 $[0] = \{\ldots, -6, -4, -2, 0, 2, 4, 6, \ldots\}$
 
